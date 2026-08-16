@@ -1078,4 +1078,99 @@
                 <p>Share updates, ask questions, and celebrate milestones.</p>
             </div>
             <div class="card" style="max-width:600px; margin:0 auto;">
-                <h3>💬 Discu
+                <h3>💬 Discussion Board</h3>
+                <p style="margin-bottom:16px;">Leave a message for the community. All data stays in your browser.</p>
+                <div id="messageBoard" style="max-height:300px; overflow-y:auto; margin-bottom:16px; padding:12px; background:var(--bg-secondary); border-radius:var(--radius-sm);">
+                    <p style="color:var(--text-muted); font-size:0.9rem;">No messages yet. Be the first!</p>
+                </div>
+                <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                    <input type="text" id="msgName" placeholder="Your name" style="flex:1; min-width:120px; padding:12px 16px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary); font-family:inherit;">
+                    <input type="text" id="msgBody" placeholder="Say something..." style="flex:2; min-width:200px; padding:12px 16px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary); font-family:inherit;">
+                </div>
+                <button class="btn btn-primary" style="margin-top:12px;" onclick="postMessage()">Post Message</button>
+            </div>
+        </section>
+
+        <!-- WAIVER SECTION -->
+        <section id="waiver" class="section">
+            <div class="section-header">
+                <h2>Volunteer Waiver & Agreement</h2>
+                <p>Digital liability waiver for trainers, fosters, and volunteers. Fill out the form below to generate your signed agreement.</p>
+            </div>
+
+            <div class="waiver-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="wFirst">First Name *</label>
+                        <input type="text" id="wFirst" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="wLast">Last Name *</label>
+                        <input type="text" id="wLast" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="wEmail">Email *</label>
+                    <input type="email" id="wEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="wRole">Role *</label>
+                    <select id="wRole">
+                        <option value="">Select your role...</option>
+                        <option value="trainer">Dog Trainer / Handler</option>
+                        <option value="foster">Foster Volunteer</option>
+                        <option value="transporter">Dog Transporter</option>
+                        <option value="vet">Veterinary Professional</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="wDog">Dog's Name (if assigned)</label>
+                    <input type="text" id="wDog" placeholder="e.g., River">
+                </div>
+                <div class="form-group">
+                    <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+                        <input type="checkbox" id="wAgree" style="width:20px; height:20px; accent-color:var(--accent);">
+                        <span>I agree to the liability waiver terms below *</span>
+                    </label>
+                </div>
+                <button class="btn btn-primary" onclick="generateWaiver()">Generate & Sign Waiver</button>
+
+                <div class="waiver-preview" id="waiverPreview"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="#" onclick="showSection('home'); return false;">Home</a>
+            <a href="#" onclick="showSection('training'); return false;">Training</a>
+            <a href="#" onclick="showSection('voice'); return false;">Voice</a>
+            <a href="#" onclick="showSection('ada'); return false;">ADA</a>
+            <a href="#" onclick="showSection('community'); return false;">Community</a>
+            <a href="#" onclick="showSection('waiver'); return false;">Waiver</a>
+        </div>
+        <p>🐕‍🦺 OpenGuide — Built for DEV Dog Days 2026. Free, open, and accessible.</p>
+        <p style="margin-top:8px; font-size:0.8rem;">Not a substitute for professional guide dog organization certification. Always work with accredited trainers.</p>
+    </footer>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ==================== NAVIGATION ====================
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+            document.querySelector(`.nav-links a[href="#${id}"]`)?.classList.add('active');
+            window.scrollTo(0,0);
+        }
+        function toggleMenu() {
+            document.getElementById('mobileMenu').classList.toggle('open');
+        }
+
+        // ==================== MILESTONES ====================
+        const milestones = [
+            {
+                title: "Intake & Temperament Assessment",
+                items: ["Veterinary health screening", "Behavioral evaluation (SAITE protocol)", "Socialization baseline test",
