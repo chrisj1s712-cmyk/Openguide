@@ -1173,4 +1173,399 @@
         const milestones = [
             {
                 title: "Intake & Temperament Assessment",
-                items: ["Veterinary health screening", "Behavioral evaluation (SAITE protocol)", "Socialization baseline test",
+                items: ["Veterinary health screening", "Behavioral  evaluation (SAITE protocol)", "Socialization baseline test", "Handler-dog compatibility scoring", "Set training goals and timeline"]
+            },
+            {
+                title: "Basic Obedience Foundation",
+                items: ["Sit, down, stay with hand signals", "Loose leash walking / heel", "Recall with 90%+ reliability", "Leave it / drop it under distraction", "Place command with duration"]
+            },
+            {
+                title: "Public Access Preparation",
+                items: ["Calm behavior in elevators", "Ignore food on ground in public", "Under-chair settling at restaurants", "No barking at strangers or dogs", "Bathroom on command / schedule"]
+            },
+            {
+                title: "Guide Task Training",
+                items: ["Intelligent disobedience (stop for curbs)", "Find the door / find home", "Avoid overhead obstacles", "Navigate around obstacles smoothly", "Platform / train boarding"]
+            },
+            {
+                title: "Team Matching & Bonding",
+                items: ["Handler assessment (mobility needs)", "Lifestyle compatibility review", "2-week bonding period", "Public access test together", "Fine-tune communication signals"]
+            },
+            {
+                title: "Certification & Graduation",
+                items: ["ADI public access test", "Obedience exam under distraction", "Task reliability assessment", "Handler independence evaluation", "Graduation and ongoing support plan"]
+            }
+        ];
+
+        let currentMilestone = 0;
+        let completedMilestones = JSON.parse(localStorage.getItem('og_milestones') || '[]');
+
+        function renderMilestoneDetails() {
+            const container = document.getElementById('milestoneDetails');
+            container.innerHTML = milestones.map((m, i) => `
+                <div class="milestone-detail ${i === currentMilestone ? 'active' : ''}">
+                    <h4>${i+1}. ${m.title}</h4>
+                    <ul>${m.items.map(item => `<li>${item}</li>`).join('')}</ul>
+                    ${completedMilestones.includes(i) ? '<p style="color:var(--success); margin-top:12px;">✅ Completed</p>' : `<button class="btn btn-primary" style="margin-top:16px;" onclick="completeMilestone(${i})">Mark Complete</button>`}
+                </div>
+            `).join('');
+            updateProgress();
+        }
+
+        function setMilestone(idx) {
+            currentMilestone = idx;
+            document.querySelectorAll('.milestone-step').forEach((el, i) => {
+                el.classList.toggle('active', i === idx);
+                el.classList.toggle('completed', completedMilestones.includes(i));
+                el.setAttribute('aria-selected', i === idx);
+            });
+            renderMilestoneDetails();
+        }
+
+        function completeMilestone(idx) {
+            if (!completedMilestones.includes(idx)) {
+                completedMilestones.push(idx);
+                localStorage.setItem('og_milestones', JSON.stringify(completedMilestones));
+                showToast(`Milestone ${idx+1} completed! 🎉`);
+                setMilestone(idx);
+            }
+        }
+
+        function updateProgress() {
+            const pct = Math.round((completedMilestones.length / milestones.length) * 100);
+            document.getElementById('progressPercent').textContent = pct + '%';
+            document.getElementById('progressFill').style.width = pct + '%';
+            document.getElementById('progressFill').parentElement.setAttribute('aria-valuenow', pct);
+            document.getElementById('statDogs').textContent = completedMilestones.length > 0 ? '1' : '0';
+            document.getElementById('statGrad').textContent = pct === 100 ? '1' : '0';
+        }
+
+        const modules = [
+            {
+                icon: '🎯', title: 'Focus & Attention', time: 'Week 1–2',
+                video: 'https://www.youtube.com/embed/FG9xSgN86BM',
+                caption: 'Zak George — How to Teach The First 7 Things To Your Dog',
+                transcript: 'Start in a low-distraction environment. Hold a treat to your nose. When your dog makes eye contact, mark with "Yes!" and reward. Build duration to 5 seconds, then 10, then add mild distractions like toys or sounds.'
+            },
+            {
+                icon: '🦮', title: 'Loose Leash Walking', time: 'Week 3–4',
+                video: 'https://www.youtube.com/embed/jFMA5ggFsXU',
+                caption: 'Zak George — Dog Training 101: How to Train ANY DOG the Basics',
+                transcript: 'Use a high-value treat at your hip. Take one step. If the dog stays in position, mark and reward. If they pull, stop moving. Only proceed when leash is loose. Practice turns, pace changes, and eventually outdoor distractions.'
+            },
+            {
+                icon: '🛑', title: 'Leave It & Drop It', time: 'Week 5',
+                video: 'https://www.youtube.com/embed/N87-BSbz068',
+                caption: 'Lisa Gallegos — Public Access Training for Service Dogs Step By Step',
+                transcript: 'Place a treat on the ground and cover it with your foot. Say "Leave it." When your dog looks away from the treat, mark and reward from your other hand. Never let them get the dropped treat. Practice with higher-value items over time.'
+            },
+            {
+                icon: '🏪', title: 'Public Access Basics', time: 'Week 6–8',
+                video: 'https://www.youtube.com/embed/PEiACncIkVg',
+                caption: 'Service Dog Training — Public Access Training Tips Episode 1',
+                transcript: 'Start with short visits to pet-friendly stores. Reward calm behavior. Practice settling under a chair. If your dog gets overwhelmed, leave immediately. Gradually increase duration and difficulty. Always end on a success.'
+            },
+            {
+                icon: '🚸', title: 'Intelligent Disobedience', time: 'Week 9–12',
+                video: 'https://www.youtube.com/embed/2y9CMp6jBcY',
+                caption: 'Service Dog Public Access Test — Example evaluation',
+                transcript: 'Set up a "danger" scenario — a low branch, a hole, or a curb. Walk toward it. When your dog stops or redirects you, reward heavily. This is the most critical guide dog skill: the dog must refuse unsafe commands.'
+            },
+            {
+                icon: '🎓', title: 'Public Access Test Prep', time: 'Week 13+',
+                video: 'https://www.youtube.com/embed/fYt5rHZUHUI',
+                caption: 'Guide Dogs UK — The Journey of a Guide Dog: Formal Training',
+                transcript: 'Run through the full ADI public access test with a neutral evaluator. Include: entry, navigation, distractions, food refusal, recall, and load into vehicle. Document any areas needing polish before final certification.'
+            }
+        ];
+
+        function renderModules() {
+            document.getElementById('moduleList').innerHTML = modules.map((m, i) => `
+                <div class="module-item" id="mod-${i}">
+                    <button class="module-header" onclick="toggleModule(${i})" aria-expanded="false">
+                        <div class="module-title">
+                            <div class="module-icon">${m.icon}</div>
+                            <div class="module-meta">
+                                <h4>${m.title}</h4>
+                                <span>${m.time}</span>
+                            </div>
+                        </div>
+                        <span class="module-toggle">▼</span>
+                    </button>
+                    <div class="module-content">
+                        <div class="module-body">
+                            <div class="video-wrapper">
+                                <iframe src="${m.video}" title="${m.title}" loading="lazy" allowfullscreen></iframe>
+                            </div>
+                            <p class="video-caption">${m.caption}</p>
+                            <div class="audio-controls">
+                                <button class="audio-btn" onclick="playModuleAudio(${i})">▶️ Play Audio Lesson</button>
+                                <button class="audio-btn" onclick="markModuleDone(${i})">✅ Mark Complete</button>
+                            </div>
+                            <div class="transcript-box">
+                                <h5>Lesson Transcript</h5>
+                                <p>${m.transcript}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleModule(i) {
+            const el = document.getElementById('mod-' + i);
+            const expanded = el.classList.toggle('expanded');
+            el.querySelector('.module-header').setAttribute('aria-expanded', expanded);
+        }
+
+        function markModuleDone(i) {
+            let done = JSON.parse(localStorage.getItem('og_modules') || '[]');
+            if (!done.includes(i)) {
+                done.push(i);
+                localStorage.setItem('og_modules', JSON.stringify(done));
+                showToast(`Module "${modules[i].title}" completed!`);
+            }
+        }
+
+        function playModuleAudio(i) {
+            const text = modules[i].transcript;
+            document.getElementById('voiceText').value = text;
+            showSection('voice');
+            setTimeout(speakText, 400);
+        }
+
+        let synth = window.speechSynthesis;
+        let utterance = null;
+
+        const presets = {
+            heel: "Heel position exercise. Start with your dog on your left side. Hold a treat at your left hip. Say 'Heel' and take one step forward. If your dog stays aligned with your leg, say 'Yes!' and reward. Repeat for five steps, then ten, then add turns.",
+            sit: "Sit-stay with distractions. Ask your dog to sit. Hold your palm up and say 'Stay.' Take one step back, then return and reward. Gradually increase distance and duration. Add mild distractions like dropping keys.",
+            down: "Down-stay duration build. Ask your dog to lie down. Say 'Stay' and step back one foot. Return and reward. Build to 30 seconds, then 2 minutes. Reward calm breathing and relaxed posture.",
+            come: "Recall from twenty feet. Have a helper hold your dog. Show a high-value treat, say their name and 'Come!' in an excited voice. When they reach you, reward with multiple treats and praise. Never call to punish.",
+            ignore: "Ignore food on the ground. Place a low-value treat on the floor. Say 'Leave it.' Cover with your foot if needed. When your dog looks away or at you, mark and reward from your hand. Practice with dropped food in public."
+        };
+
+        document.getElementById('voicePreset').addEventListener('change', function() {
+            if (presets[this.value]) {
+                document.getElementById('voiceText').value = presets[this.value];
+            }
+        });
+
+        function speakText() {
+            const text = document.getElementById('voiceText').value;
+            if (!text) return;
+            stopSpeech();
+            utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.95;
+            utterance.pitch = 1.05;
+            const voices = synth.getVoices();
+            const preferred = voices.find(v => v.name.includes('Google US English') || v.name.includes('Samantha') || v.name.includes('Victoria') || v.name.includes('Karen'));
+            if (preferred) utterance.voice = preferred;
+            utterance.onend = () => { setBtnState('idle'); };
+            synth.speak(utterance);
+            setBtnState('playing');
+        }
+
+        function pauseSpeech() {
+            if (synth.speaking) {
+                synth.pause();
+                setBtnState('paused');
+            }
+        }
+
+        function stopSpeech() {
+            synth.cancel();
+            setBtnState('idle');
+        }
+
+        function setBtnState(state) {
+            document.getElementById('speakBtn').disabled = state === 'playing';
+            document.getElementById('pauseBtn').disabled = state !== 'playing';
+            document.getElementById('stopBtn').disabled = state === 'idle';
+        }
+
+        function saveElevenKey() {
+            const key = document.getElementById('elevenKey').value.trim();
+            if (key) {
+                localStorage.setItem('og_eleven_key', key);
+                document.getElementById('keyStatus').textContent = '✅ Key saved locally.';
+                document.getElementById('keyStatus').style.color = 'var(--success)';
+            }
+        }
+        function clearElevenKey() {
+            localStorage.removeItem('og_eleven_key');
+            document.getElementById('elevenKey').value = '';
+            document.getElementById('keyStatus').textContent = '🗑️ Key cleared.';
+            document.getElementById('keyStatus').style.color = 'var(--text-muted)';
+        }
+        const savedKey = localStorage.getItem('og_eleven_key');
+        if (savedKey) {
+            document.getElementById('elevenKey').value = savedKey;
+            document.getElementById('keyStatus').textContent = '✅ Key loaded from storage.';
+            document.getElementById('keyStatus').style.color = 'var(--success)';
+        }
+
+        const adaItems = [
+            { id: 'ada1', title: 'Dog is housebroken', desc: 'No accidents in public or home for 30+ days.' },
+            { id: 'ada2', title: 'Under handler control', desc: 'Leashed, harnessed, or tethered unless it interferes with task work.' },
+            { id: 'ada3', title: 'No aggressive behavior', desc: 'Does not bark, growl, or lunge at people or other animals.' },
+            { id: 'ada4', title: 'No solicitation', desc: 'Does not beg for food or attention from the public.' },
+            { id: 'ada5', title: 'No disruption', desc: 'Remains quiet and calm in theaters, restaurants, and transit.' },
+            { id: 'ada6', title: 'Task-trained', desc: 'Performs at least one specific task directly related to handler disability.' },
+            { id: 'ada7', title: 'Public Access Test passed', desc: 'Completed ADI or equivalent public access test with evaluator.' },
+            { id: 'ada8', title: 'Vaccinations current', desc: 'Rabies, DHPP, Bordetella, and any local requirements up to date.' },
+            { id: 'ada9', title: 'Health certificate', desc: 'Veterinarian health clearance within last 12 months.' },
+            { id: 'ada10', title: 'Handler education complete', desc: 'Handler understands ADA rights, etiquette, and access laws.' }
+        ];
+
+        function renderChecklist() {
+            const saved = JSON.parse(localStorage.getItem('og_ada') || '[]');
+            document.getElementById('adaChecklist').innerHTML = adaItems.map(item => {
+                const checked = saved.includes(item.id);
+                return `
+                    <div class="checklist-item ${checked ? 'completed' : ''}" onclick="toggleCheck('${item.id}')" role="checkbox" aria-checked="${checked}" tabindex="0">
+                        <div class="checklist-box">${checked ? '✓' : ''}</div>
+                        <div class="checklist-text">
+                            <h4>${item.title}</h4>
+                            <p>${item.desc}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleCheck(id) {
+            let saved = JSON.parse(localStorage.getItem('og_ada') || '[]');
+            if (saved.includes(id)) {
+                saved = saved.filter(x => x !== id);
+            } else {
+                saved.push(id);
+                showToast('Checklist item saved! ✅');
+            }
+            localStorage.setItem('og_ada', JSON.stringify(saved));
+            renderChecklist();
+        }
+
+        function exportChecklist() {
+            const saved = JSON.parse(localStorage.getItem('og_ada') || '[]');
+            const data = {
+                date: new Date().toISOString(),
+                completed: saved.length,
+                total: adaItems.length,
+                items: adaItems.filter(i => saved.includes(i.id)).map(i => i.title)
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `openguide-ada-checklist-${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Checklist exported! 📥');
+        }
+
+        function resetChecklist() {
+            if (confirm('Reset all checklist progress?')) {
+                localStorage.removeItem('og_ada');
+                renderChecklist();
+                showToast('Checklist reset.');
+            }
+        }
+
+        function renderMessages() {
+            const msgs = JSON.parse(localStorage.getItem('og_messages') || '[]');
+            const board = document.getElementById('messageBoard');
+            if (msgs.length === 0) {
+                board.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">No messages yet. Be the first!</p>';
+                return;
+            }
+            board.innerHTML = msgs.map(m => `
+                <div style="padding:10px; border-bottom:1px solid var(--border);">
+                    <strong style="color:var(--accent-hover); font-size:0.85rem;">${escapeHtml(m.name)}</strong>
+                    <span style="color:var(--text-muted); font-size:0.75rem; float:right;">${m.time}</span>
+                    <p style="margin-top:4px; font-size:0.9rem; color:var(--text-secondary);">${escapeHtml(m.body)}</p>
+                </div>
+            `).join('');
+        }
+
+        function postMessage() {
+            const name = document.getElementById('msgName').value.trim() || 'Anonymous';
+            const body = document.getElementById('msgBody').value.trim();
+            if (!body) return showToast('Please enter a message.');
+            const msgs = JSON.parse(localStorage.getItem('og_messages') || '[]');
+            msgs.unshift({ name, body, time: new Date().toLocaleString() });
+            localStorage.setItem('og_messages', JSON.stringify(msgs.slice(0, 50)));
+            document.getElementById('msgBody').value = '';
+            renderMessages();
+            showToast('Message posted! 💬');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function generateWaiver() {
+            const first = document.getElementById('wFirst').value.trim();
+            const last = document.getElementById('wLast').value.trim();
+            const email = document.getElementById('wEmail').value.trim();
+            const role = document.getElementById('wRole').value;
+            const dog = document.getElementById('wDog').value.trim();
+            const agreed = document.getElementById('wAgree').checked;
+
+            if (!first || !last || !email || !role || !agreed) {
+                showToast('Please fill all required fields and agree to terms.');
+                return;
+            }
+
+            const date = new Date().toLocaleDateString();
+            const preview = document.getElementById('waiverPreview');
+            preview.innerHTML = `
+                <h3>Volunteer Liability Waiver & Agreement</h3>
+                <p><strong>Volunteer:</strong> ${escapeHtml(first)} ${escapeHtml(last)}<br>
+                <strong>Email:</strong> ${escapeHtml(email)}<br>
+                <strong>Role:</strong> ${escapeHtml(role)}<br>
+                ${dog ? `<strong>Dog:</strong> ${escapeHtml(dog)}<br>` : ''}
+                <strong>Date Signed:</strong> ${date}</p>
+                <hr style="border-color:var(--border); margin:16px  0;">
+                <p>I, the undersigned volunteer, understand that working with dogs involves inherent risks including but not limited to bites, scratches, falls, and allergic reactions. I voluntarily assume all risks associated with my participation in the OpenGuide program.</p>
+                <p>I agree to follow all training protocols, safety guidelines, and instructions provided by OpenGuide staff and partner organizations. I understand that I am not an employee of OpenGuide and am participating on a voluntary basis.</p>
+                <p>I release OpenGuide, its organizers, trainers, and partner rescues from liability for any injury or damage arising from my volunteer activities, except in cases of gross negligence or willful misconduct.</p>
+                <p>I grant OpenGuide permission to use photographs or videos of me and the dog(s) I work with for educational and promotional purposes.</p>
+                <p style="margin-top:24px; text-align:center; font-family:Inter,sans-serif;">
+                    <strong>Signed electronically by:</strong><br>
+                    ${escapeHtml(first)} ${escapeHtml(last)}<br>
+                    ${date}
+                </p>
+                <div style="text-align:center; margin-top:20px;">
+                    <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save as PDF</button>
+                </div>
+            `;
+            preview.classList.add('active');
+            showToast('Waiver generated! Review and print below.');
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderMilestoneDetails();
+            setMilestone(0);
+            renderModules();
+            renderChecklist();
+            renderMessages();
+            updateProgress();
+        });
+
+        if (window.speechSynthesis) {
+            window.speechSynthesis.onvoiceschanged = () => {};
+        }
+    </script>
+</body>
+</html>
+
